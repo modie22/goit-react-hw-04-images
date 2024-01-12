@@ -17,29 +17,6 @@ function App() {
   const [totalHits,setTotalHits]=useState(0);
   const [page,setPage]=useState(0);
 
-
-
-   async function  createSearch ()  {
-    try {
-      setStatus('pending')
-      const { totalHits, hits } = await fetchImages(
-        inputData,
-        page
-      );
-      if (hits.length < 1) {
-        setStatus('idle');
-        Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      } else {
-        setItems(hits);
-        setTotalHits(totalHits);
-        setStatus('resolved');
-      }
-    } catch (error) {
-      setStatus('rejected');
-    }
-  };
   const handleSubmit = inputDataX => {
     if (inputData===inputDataX) {
       Notiflix.Notify.info('You are already viewing images with this request.');
@@ -50,27 +27,37 @@ function App() {
     setItems([]);
   };
 
-  async function loadingNext () {
-    setStatus('pending');
-    try {
-      const { hits } = await fetchImages(inputData, page);
-      setItems(state=>{return [...state,...hits]});
-      setStatus('resolved');
-    } catch (error) {
-      setStatus('rejected');
-    }
-  };
   async function onNextPage () {
     setPage(state=>state+1)
   };
   useEffect(()=>{
-    createSearch();
+    setStatus('pending')
+    fetchImages(
+      inputData,
+      page
+    ).then( ({totalHits, hits})=>{
+      if (hits.length < 1) {
+        setStatus('idle');
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      } else {
+        setItems(hits);
+        setTotalHits(totalHits);
+        setStatus('resolved');
+      }
+    }).catch (error=>{setStatus('rejected');})
 
-  },[inputData]);
+  },[inputData, page]);
    useEffect(()=>{
-
-    loadingNext();
-  },[page]) 
+    setStatus('pending');
+    fetchImages(inputData, page).then(({hits})=>{
+      setItems(state=>{return [...state,...hits]});
+      setStatus('resolved');
+    }).catch ((_error)=>{
+      setStatus('rejected');
+    }); 
+  },[inputData, page]) 
 
 
     if (status === 'idle') {
