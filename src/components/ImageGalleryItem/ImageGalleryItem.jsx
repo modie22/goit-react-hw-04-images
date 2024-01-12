@@ -1,8 +1,32 @@
 import Modal from '../Modal/Modal';
-import { Component } from 'react';
+import { useState } from 'react';
 import css from './ImageGalleryItem.module.css'
 
-class ImageGalleryItem extends Component {
+function ImageGalleryItem ({item}) {
+
+  const [shownModal,setShownModal]= useState(false);
+  const onModal = () => {
+    setShownModal(state=>!state)
+  };
+  
+    const { webformatURL } = item;
+    return (
+      <li className={css.imageGalleryItem}>
+        <img
+          onClick={onModal}
+          className={css.imageGalleryItemImage}
+          src={webformatURL}
+          alt="img"
+        />
+        {shownModal && <Modal onClose={onModal} image={item} />}
+      </li>
+    );
+  
+}
+
+export default ImageGalleryItem;
+
+/* class ImageGalleryItem extends Component {
   state = {
     shownModal: false,
   };
@@ -27,4 +51,4 @@ class ImageGalleryItem extends Component {
 }
 
 export default ImageGalleryItem;
-
+ */

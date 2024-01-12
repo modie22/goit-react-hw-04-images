@@ -15,7 +15,7 @@ function App () {
   const [status,setStatus]= useState('idle');
   const [totalHitsX,setTotalHitsX]= useState(0);
   const [page,setPage]= useState(0);
-
+  
   const createSearch = useCallback( async () => {
     try {
       setStatus('pending')
@@ -36,7 +36,8 @@ function App () {
     } catch (error) {
       setStatus('rejected');
     }
-  },[inputData, page]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[inputData]);
   const handleSubmit = inputDataE => {
     if (inputData===inputDataE) {
       Notiflix.Notify.info('You are already viewing images with this request.');
@@ -52,7 +53,7 @@ function App () {
 
     try {
       const { hits } = await fetchImages(inputData,page);
-      setItems(state=>{return [...state,...hits]});
+      setItems(state=>[...state, ...hits]);
       setStatus('resolved');
     } catch (error) {
       setStatus('rejected');
@@ -62,13 +63,15 @@ function App () {
     setPage(state=>state+1)
   };
 
-  useEffect(()=>{
+   useEffect(()=>{
+    if(inputData)
     createSearch();
-  },[createSearch])
+  },[createSearch, inputData])
   useEffect(()=>{
+    if(page>1)
     loadingNext();
-  },[loadingNext])
-
+  },[loadingNext, page]) 
+ 
     if (status === 'idle') {
       return (
         <div className={css.app}>
