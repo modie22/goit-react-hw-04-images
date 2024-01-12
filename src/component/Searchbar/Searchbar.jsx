@@ -23,7 +23,7 @@ function Searchbar({ onSubmit }) {
     <header className={s.container}>
       <form className={s.form} onSubmit={handleSubmit}>
         <button type="submit" className={s.button}>
-          <span className={s.buttonLabel}>Search</span>
+         Search
         </button>
 
         <input
