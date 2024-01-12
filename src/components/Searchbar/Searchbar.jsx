@@ -1,4 +1,4 @@
-import { useState,Component } from 'react';
+import { useState} from 'react';
 import Notiflix from 'notiflix';
 import css from './Searchbar.module.css'
 
